@@ -1,0 +1,59 @@
+<html>
+	<head>
+		<meta charset="UTF-8"/>
+		<script src="./lib/react.js"></script>
+		<script src="./lib/react-dom.js"></script>		
+		<script src="./lib/babel.min.js"></script>				
+		<script type="text/babel">
+			class HelloWorld extends React.Component {
+				constructor() {
+					super();
+					this.state = {
+						name: 'Deepak',
+						views: 0
+					};
+				}
+				changeName() {
+					this.setState({
+						name: 'Hashir'
+					});
+				}
+				changeViewCount() {
+					this.setState({
+						views: this.state.views + 1
+					});
+				}
+				render() {					
+					return(
+						<div>
+							<h1 style={{color: 'red'}}>Hello {this.state.name}</h1>							
+							<h2>Views {this.state.views}</h2>
+							<button onClick={this.changeViewCount.bind(this)}>Click Me</button>
+							<Message 
+								message={`Hello ` + this.state.name}
+								changeName={this.changeName.bind(this)}
+							/>
+						</div>
+					);
+				}
+			}
+			
+			const Message = ({message, changeName}) => (
+				<div>
+					<h1>
+						{message}
+					</h1>
+					<button onClick={changeName}>Change Name</button>
+				</div>	
+			);
+				
+			
+			function onload() {
+				ReactDOM.render(<HelloWorld/>, document.getElementById("main"));
+			}
+		</script>
+	</head>
+	<body onload="onload()">
+		<div id="main"></div>
+	</body>
+</html>
