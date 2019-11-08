@@ -1,0 +1,45 @@
+<html>
+	<head>
+		<meta charset = "UTF-8"/>
+		<script src="./lib/react.js"></script>
+		<script src="./lib/react-dom.js"></script>
+		<script src="./lib/babel.min.js"></script>
+		<script type="text/babel">
+			class Message extends React.Component {
+				render() {					
+					return(
+						<h2>{this.props.message}</h2>
+					);
+				}
+			}
+			
+			class HelloWorld extends React.Component {
+				constructor(props) {
+					super(props);
+					
+					this.state = {
+						views: 0
+					};
+				}
+				incrementView() {
+					this.setState({views: this.state.views + 1});
+				}
+				render() {
+					return(
+						<div>
+							<h1>Hello World</h1>
+							<Message message="I am Deepak"/>
+							<h2>{this.state.views}</h2>
+							<button onClick={this.incrementView.bind(this)}>View</button>
+						</div>
+					);
+				}
+			}
+			
+			ReactDOM.render(<HelloWorld/>, document.getElementById("main"));
+		</script>
+	</head>
+	<body>
+		<div id="main"/>		
+	</body>
+</html>

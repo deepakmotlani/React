@@ -1,0 +1,33 @@
+<html>
+	<head>
+		<meta charset = "UTF-8"/>
+		<script src="./lib/react.js"></script>
+		<script src="./lib/react-dom.js"></script>
+		<script src="./lib/babel.min.js"></script>
+		<script type="text/babel">
+			class Message extends React.Component {
+				render() {
+					return(
+						<h2>This is React</h2>
+					);
+				}
+			}
+			
+			class HelloWorld extends React.Component {
+				render() {
+					return(
+						<div>
+							<h1>Hello World</h1>
+							<Message/>
+						</div>
+					);
+				}
+			}
+			
+			ReactDOM.render(<HelloWorld/>, document.getElementById("main"));
+		</script>
+	</head>
+	<body>
+		<div id="main"/>		
+	</body>
+</html>

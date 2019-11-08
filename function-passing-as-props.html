@@ -1,0 +1,47 @@
+<html>
+	<head>
+		<meta charset = "UTF-8"/>
+		<script src="./lib/react.js"></script>
+		<script src="./lib/react-dom.js"></script>
+		<script src="./lib/babel.min.js"></script>
+		<script type="text/babel">
+			const Message = (props) => <h2>{props.children}</h2>;
+			
+			function Views(props){				
+				return(
+					<div>
+						<h2>{props.views}</h2>
+						<button onClick={props.incrementView}>View</button>
+					</div>
+				);				
+			}
+			
+			class HelloWorld extends React.Component {
+				constructor(props) {
+					super(props);
+					
+					this.state = {
+						views: 0
+					};
+				}
+				incrementView() {
+					this.setState({views: this.state.views + 1});
+				}
+				render() {
+					return(
+						<div>
+							<h1>Hello World</h1>
+							<Message>I am Deepak</Message>
+							<Views views={this.state.views} incrementView={this.incrementView.bind(this)}/>
+						</div>
+					);
+				}
+			}
+			
+			ReactDOM.render(<HelloWorld/>, document.getElementById("main"));
+		</script>
+	</head>
+	<body>
+		<div id="main"/>		
+	</body>
+</html>

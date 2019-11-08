@@ -1,0 +1,31 @@
+<html>
+	<head>
+		<meta charset = "UTF-8"/>
+		<script src="./lib/react.js"></script>
+		<script src="./lib/react-dom.js"></script>
+		<script src="./lib/babel.min.js"></script>
+		<script type="text/babel">			
+			class HelloWorld extends React.Component {				
+				capture() {
+					console.log(this.refs.username.value);
+					console.log(this.refs.password.value);
+				}
+				render() {
+					return(
+						<div>
+							<h1>Hello World</h1>
+							<input type="text" ref="username"></input><hr/>
+							<input type="text" ref="password"></input><hr/>
+							<button onClick={this.capture.bind(this)}>Submit</button>
+						</div>
+					);
+				}
+			}
+			
+			ReactDOM.render(<HelloWorld/>, document.getElementById("main"));
+		</script>
+	</head>
+	<body>
+		<div id="main"/>		
+	</body>
+</html>
