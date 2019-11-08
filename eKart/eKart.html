@@ -1,0 +1,81 @@
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<script src="../react.js"></script>
+		<script src="../react-dom.js"></script>
+		<script src="../babel.min.js"></script>
+		<script src="store.js"></script>
+		<script src="product-reducer.js"></script>
+		<script src="user-reducer.js"></script>
+		<script src="combined-reducer.js"></script>
+		
+		<script type="text/babel">
+			
+			function ProductData(name, price) {		
+				this.name = name;
+				this.price = price;				
+				
+				this.getName = () => this.name;
+				this.getPrice = () => this.price;
+			}
+			
+			function UserData(name, contact) {		
+				this.name = name;
+				this.contact = contact;				
+				
+				this.getName = () => this.name;
+				this.getContact = () => this.contact;
+			}
+			
+			function Products({store}) {			
+				return(
+					<div>
+						<h2>Products</h2>
+						<button onClick={() => {store.dispatch({type: 'ADD_PRODUCT', value: 1})}}>Click Me</button>
+						{
+							store.getState().products.map((product, index) => {
+								return (
+									<div key={index}>
+										<div>{product.getName()}</div>
+										<div>{product.getPrice()}</div>
+									</div>
+								);
+							})
+						}
+					</div>
+				);
+			}
+			
+			function User({store}) {										
+				return(
+					<div>
+						<h2>Users</h2>
+						<button onClick={() => {store.dispatch({type: 'ADD_USER', value: 1})}}>Click Me</button>
+						{
+							store.getState().users.map((user, index) => {
+								return (
+									<div key={index}>
+										<div>{user.getName()}</div>										
+									</div>
+								);
+							})
+						}
+					</div>
+				);
+			}
+					
+			const store = createStore(combinedReducer);
+			
+			function renderApp() {
+				ReactDOM.render(<div><Products store={store}/><User store={store}/></div>, document.getElementById("main"));
+			}
+			
+			renderApp();
+			store.subscribe(renderApp);
+		</script>
+	</head>
+	<body>
+		<h1>eKart</h1>
+		<div id="main"></div>
+	</body>
+</html>
