@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Salary Calculator</title>
+	<style>
+		body{
+			margin-left: 50px;
+		}
+		.field{
+			margin-bottom: 10px;
+		}
+		label{
+			display: block;
+		}
+		#divResult{
+			color : red;
+			font-size: 22pt;
+			font-weight: bold;
+		}
+	</style>
+	<script>
+		function showTax() {
+			document.getElementById('spanTax').innerHTML = document.getElementById('rangeTax').value;
+		}
+		function sum(a, b, c) {
+			return (a+b+c);
+		}
+		function calculateTax(value, percent){
+			return (percent*value)/100;
+		}
+		function calculateSalary() {
+			var basic = getIntValue('txtBasic');
+			var hra = getIntValue('txtHra');
+			var da = getIntValue('txtDa');
+			var tax = getIntValue('rangeTax');
+			var salary = sum(basic, hra, da);
+			var taxAmount = calculateTax(salary, tax);
+			var netSalary = salary - taxAmount;
+			document.getElementById('divResult').innerHTML = netSalary;
+		}
+		function getIntValue(id){
+			return parseInt(document.getElementById(id).value);
+		}
+	</script>
+</head>
+<body>
+	<h1>Salary Calculator</h1>
+	<hr>
+	<div class="content">
+		<div class="field">
+			<label for="">Basic :</label>
+			<input type="text" name="" id="txtBasic">
+		</div>
+		<div class="field">
+			<label for="">HRA :</label>
+			<input type="text" name="" id="txtHra">
+		</div>
+		<div class="field">
+			<label for="">DA :</label>
+			<input type="text" name="" id="txtDa">
+		</div>
+		<div class="field">
+			<label for="">Tax :</label>
+			<input type="range" name="" id="rangeTax" min="0" max="30" value="0" onChange="showTax()">
+			<span id="spanTax">[Tax]</span>
+		</div>
+		<div class="field">
+			<input type="button" value="Calculate" id="btnCalculate" onClick="calculateSalary()">
+		</div>
+		<div class="field">
+			<div id="divResult">[Salary]</div>
+		</div>
+	</div>
+</body>
+</html>

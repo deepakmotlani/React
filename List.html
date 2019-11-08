@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Products</title>
+	<script src="react.js"></script>
+	<script src="react-dom.js"></script>
+	<script src="babel.min.js"></script>
+	<style>
+		body{
+			margin-left: 50px;
+		}
+	</style>
+	<script type="text/babel">
+
+		//Model
+		function ListModel(){
+			var _data = {
+				list: []
+			};
+			this.toJSON = function(){
+				var result = {};
+				for(var key in _data)
+					result[key] = _data[key];
+				return result;
+			}
+
+			var _changeListeners = [];
+			this.onChange = function(listenerFn){
+				_changeListeners.push(listenerFn);
+			}
+
+			this.addProduct = function(product){
+				_data.list.push(product);
+				_changeListeners.forEach(function(listenerFn){
+					if (typeof listenerFn === 'function')
+						listenerFn();	
+				});
+				console.log(_data.list);
+			}
+
+			this.removeProduct = function(index){
+				_data.list.splice(index, 1);
+				_changeListeners.forEach(function(listenerFn){
+					if (typeof listenerFn === 'function')
+						listenerFn();	
+				});
+			}
+		}
+		
+		var Product = React.createClass({
+			render: function(){
+				return ( <li>
+							<span>{this.props.item}</span>
+							<input type="button" value="Remove" id="btnRemove" onClick={this.props.onRemove.bind(this, this.props.index)}/>
+						</li>
+				);
+			}
+		})
+
+		var Products = React.createClass({
+			addProduct: function() {
+				this.props.model.addProduct(this.refs.productTemp.value);
+			},
+			removeProduct : function(index) {
+				this.props.model.removeProduct(index);
+			},
+			render: function(){
+				var model = this.props.model.toJSON();
+
+				var items = model.list.map(function(item, index){
+					return <Product key={index} item={item} index={index} onRemove={this.removeProduct}/>
+				}, this);
+
+				return(
+					<div>
+						<h1>Products</h1>
+						<ol>
+							{items}
+						</ol>
+						<input type="text" ref="productTemp"/>
+						<input type="button" value="Add Product" id="btnAdd" onClick={this.addProduct}/>
+					</div>
+				)
+			}
+		})
+ 		
+		var listModel = new ListModel();
+		
+		function renderApp(){
+			ReactDOM.render(<Products model={listModel}></Products>, document.getElementById('react-content'));
+		}
+		listModel.onChange(renderApp);
+		renderApp();
+	</script>
+</head>
+<body>
+	<div id="react-content">
+		
+	</div>
+</body>
+</html>

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>React - Calculator</title>
+	<script src="react.js"></script>
+	<script src="react-dom.js"></script>
+	<script src="babel.min.js"></script>
+
+	<script type="text/babel">
+
+		function calculatorReducer(state = 0, action){
+			switch(action.type){
+				case 'add':
+					return (state + action.value);
+				case 'subtract':
+					return (state - action.value);
+				case 'multiply':
+					return (state * action.value);
+				case 'divide':
+					return (state / action.value);
+				default:
+					return state;
+			}
+		}
+
+		function createStore(reducer){
+			var _reducer = reducer;
+			var _currentState;
+			var _changeListeners = [];
+
+			function dispatch(action){
+				var state = _reducer(_currentState, action);
+				if(state === _currentState) return;
+				_currentState = state;
+				render();
+			}
+
+			function getState(){
+				return _currentState;
+			}
+
+			function render(){
+				_changeListeners.forEach( _changeListener => {
+					if (typeof _changeListener === 'function')
+						_changeListener();	
+				});
+			}
+
+			function subscribe(_changeListener){
+				_changeListeners.push(_changeListener);
+			}
+
+			return {
+				dispatch,
+				getState,
+				subscribe
+			};
+		}
+
+		class Calculator extends React.Component{
+			addClick(){
+				var action = {type: "add", value: parseInt(this.refs.number1.value)};
+				this.props.store.dispatch(action);
+			}
+			subtractClick(){
+				var action = {type: "subtract", value: parseInt(this.refs.number1.value)};
+				this.props.store.dispatch(action);
+			}
+			multiplyClick(){
+				var action = {type: "multiply", value: parseInt(this.refs.number1.value)};
+				this.props.store.dispatch(action);
+			}
+			divideClick(){
+				var action = {type: "divide", value: parseInt(this.refs.number1.value)};
+				this.props.store.dispatch(action);
+			}
+			render(){
+				return (
+					<div>
+						<h1>Calculator</h1>
+						<hr/>
+						<input type="number" ref="number1"/>
+						<input type="button" value="Add" onClick={this.addClick.bind(this)}/>
+						<input type="button" value="Subtract" onClick={this.subtractClick.bind(this)}/>
+						<input type="button" value="Multiply" onClick={this.multiplyClick.bind(this)}/>
+						<input type="button" value="Divide" onClick={this.divideClick.bind(this)}/>
+						<div id="divResult">{this.props.store.getState()}</div>
+					</div>
+				)
+			}
+		}
+		
+		var store = createStore(calculatorReducer);
+		
+		function renderApp(){
+			ReactDOM.render(<Calculator store={store}></Calculator>, document.getElementById('react-content'));
+		}
+		renderApp();
+
+		store.subscribe(renderApp);
+	</script>
+</head>
+<body>
+	<div id="react-content">
+		
+	</div>
+</body>
+</html>

@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Bug Tracker</title>
+	<script src="react.js"></script>
+	<script src="react-dom.js"></script>
+	<script src="babel.min.js"></script>
+	<style>
+		body{
+			margin-left: 50px;
+		}
+		section{
+			margin-bottom: 10px;
+		}
+		ol{
+			width: 500px;
+			list-style: none;
+			-webkit-padding-start : 0px;
+		}
+		li{
+			margin-bottom: 10px;
+			border : 1px solid gray;
+			background-color: #e7e7e7;
+			padding: 5px;
+			border-radius: 5px;
+		}
+		.bugname, .stats{
+			font-size: 22pt;
+		}
+		.bugname{
+			cursor : pointer;
+		}
+		.closed{
+			color : red;
+			text-decoration: line-through;
+			font-style: italic;
+			font-weight: bold;
+		}
+	</style>
+	
+	<script type="text/usecases">
+		1. Add a new bug
+		2. List the bugs
+		3. Toggle 'closed' status of the bug
+		4. Remove closed bugs
+		5. Display statistics (# of closed bugs / total # of bugs)
+	</script>
+
+	<script type="text/babel">
+
+		var EventEmitter = (function(){
+			let changeListenerSymbol = Symbol();
+			class EventEmitter{
+				constructor(){
+					this[changeListenerSymbol] = [];
+				}
+				onChange(listenerFn){
+					this[changeListenerSymbol].push(listenerFn);
+				}
+				triggerChange(){
+					this[changeListenerSymbol].forEach( listenerFn => {
+						if (typeof listenerFn === 'function')
+							listenerFn();	
+					});
+				}
+			}
+			return EventEmitter;
+		})();
+
+		var Bug = (function(EventEmitter){
+			let statusSymbol = Symbol();
+			let nameSymbol = Symbol();
+			class Bug extends EventEmitter{
+				constructor(name){
+					super();
+					this[nameSymbol] = name;
+					this[statusSymbol] = true;
+				}
+				get name(){
+					return this[nameSymbol];
+				}
+				get status(){
+					return this[statusSymbol];
+				}
+				set status(value)
+				{
+					this[statusSymbol] = value;
+				}
+				toggle(){
+					this.status = !this.status;
+				}
+			}
+			return Bug;
+		})(EventEmitter);
+		
+		var BugsModel = (function(Bug, EventEmitter){
+			let bugListSymbol = Symbol();
+			class BugsModel extends EventEmitter{
+				constructor(){
+					super();
+					this[bugListSymbol] = [];
+				}
+				addBug(name){
+					var bug = new Bug(name);
+					this[bugListSymbol].push(bug);
+					this.triggerChange();
+				}
+				removeBug(index){
+					this[bugListSymbol].splice(index, 1);
+					this.triggerChange();
+				}
+				getClosedBugs(){
+					let closedBugs = 0;
+					this[bugListSymbol].forEach( bug => {
+						if(!bug.status)
+							closedBugs++;
+					});
+					return closedBugs;
+				}
+				removeClosed(){
+					let openBugList = [];
+					this[bugListSymbol].forEach( bug => {
+						if(bug.status){
+							openBugList.push(bug);
+						}
+					});
+					this[bugListSymbol] = openBugList;
+					this.triggerChange();
+				}
+				toggle(bug){
+					bug.toggle();
+					this.triggerChange();
+				}
+				toJSON(){
+					return {
+						bugList: this[bugListSymbol].slice(0),
+						totalBugs: this[bugListSymbol].length,
+						closedBugs: this.getClosedBugs()
+					}
+				}
+			}
+			return BugsModel;
+		})(Bug, EventEmitter);
+		
+		class Stats extends React.Component{
+			render(){
+				var model = this.props.model.toJSON();
+				return (
+					<section className="stats">
+						<span className="closed">{model.closedBugs}</span>
+						<span> / </span>
+						<span>{model.totalBugs}</span>
+					</section>
+				)
+			}
+		}
+
+		class EditBug extends React.Component{
+			addBug(){
+				this.props.model.addBug(this.refs.bugName.value);
+			}
+			render(){
+				return(
+					<section className="edit">
+						<label htmlFor="">Bug Name :</label>
+						<input type="text" ref="bugName" />
+						<input type="button" value="Add New" onClick={this.addBug.bind(this)}/>
+					</section>
+				)
+			}
+		}
+		
+		class BugItem extends React.Component{
+			render(){
+				return(
+					<li><span className={this.props.item.status ? "bugname" : "bugname closed"} onClick={() => this.props.toggle(this.props.item)}>{this.props.item.name}</span></li>
+				);
+			}
+		}
+
+		class ListBug extends React.Component{
+			removeClosed(){
+				this.props.model.removeClosed();
+			}
+			toggleBug(bug){
+				this.props.model.toggle(bug);
+			}
+			render(){
+				var model = this.props.model.toJSON();
+				var bugs = model.bugList.map(function(item, index){
+					return <BugItem key={index} item={item} toggle={this.toggleBug.bind(this)}/>;
+				}, this);
+				return(
+					<section className="list">
+						<ol>
+							{bugs}
+						</ol>
+						<input type="button" value="Remove Closed" onClick={this.removeClosed.bind(this)}/>
+					</section>
+				)
+			}
+		}
+
+		class Page extends React.Component {
+			render(){
+				return(
+					<div>
+						<Stats model={this.props.model}/>
+						<EditBug model={this.props.model}/>
+						<ListBug model={this.props.model}/>
+					</div>
+				)
+			}
+		}
+
+		var BugsModel = new BugsModel();		
+		function renderApp(){
+			ReactDOM.render(<Page model={BugsModel}></Page>, document.getElementById('react-content'));
+		}
+		BugsModel.onChange(renderApp);
+		renderApp();
+	</script>
+</head>
+<body>
+	<h1>Bug Tracker</h1>
+	<hr>
+	<section class="content" id="react-content">
+	 	
+	</section> 
+</body>
+</html>
