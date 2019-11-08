@@ -1,0 +1,34 @@
+{
+  "posts": [
+    {
+      "id": 1,
+      "title": "Five Point Someone",
+      "author": "Chetan Bhagat"
+    },
+    {
+      "id": 2,
+      "title": "That's the way we met",
+      "author": "Sudeep Nagarkar"
+    },
+    {
+      "id": 3,
+      "title": "Shiva Trilogy",
+      "author": "Ameesh Tripathi"
+    },
+    {
+      "id": 4,
+      "title": "If its not forever",
+      "author": "Durjoy Dutta"
+    }
+  ],
+  "comments": [
+    {
+      "id": 1,
+      "body": "some comment",
+      "postId": 1
+    }
+  ],
+  "profile": {
+    "name": "typicode"
+  }
+}
